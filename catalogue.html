@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue des Nucléus | Les Nucléus Énigmatiques de Wimereux</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #2b2d42;
+            --primary-color: #2a9d8f;
+            --primary-dark: #1d7065;
+            --accent-color: #e76f51;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary-color);
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #6c757d;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 4rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f1f3f5;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .artefacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .artefact-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .artefact-header {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .artefact-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .artefact-header .badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* Conteneur d'image cliquable */
+        .artefact-image-container {
+            width: 100%;
+            height: 320px;
+            background-color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            cursor: pointer;
+        }
+
+        .artefact-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .artefact-image-container:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Indicateur visuel au survol */
+        .artefact-image-container::after {
+            content: "🔍 Cliquer pour agrandir";
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .artefact-image-container:hover::after {
+            opacity: 1;
+        }
+
+        .artefact-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .artefact-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .artefact-meta span {
+            background-color: #e9ecef;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .artefact-body p {
+            margin-bottom: 0.8rem;
+            font-size: 0.98rem;
+        }
+
+        /* --- MODAL LIGHTBOX (AGRANDISSEMENT PHOTO) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            object-fit: contain;
+        }
+
+        .modal-caption {
+            color: #ffffff;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+
+        footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .artefacts-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .artefact-image-container {
+                height: 240px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Artefacts <span>Énigmatiques</span></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Présentation</a></li>
+                    <li><a href="catalogue.html" class="active">Catalogue des Nucléus</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <h1>Catalogue des Artefacts (N° 1 à 8)</h1>
+            <p>Inventaire détaillé des pièces taillées — Cliquer sur une photo pour l'agrandir</p>
+        </div>
+
+        <!-- Tableau Synthétique -->
+        <h2 style="margin-bottom: 1rem; color: var(--primary-dark);">Tableau Récapitulatif</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Dimensions</th>
+                        <th>Type / Support</th>
+                        <th>Caractéristiques Principales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>N° 1</strong></td>
+                        <td>16 × 10 cm</td>
+                        <td>Silex taillé bifacial</td>
+                        <td>Œil marqué par enlèvements courts, mufle délicat.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N° 2</strong></td>
+                        <td>14 × 11 cm</td>
+                        <td>Entièrement taillé</td>
+                        <td>Contient 4 éléments clés, œil surdimensionné.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N° 3</strong></td>
+                        <td>15 × 9 cm</td>
+                        <td>Façonnage type biface</td>
+                        <td>Grand évidement (œil), mufle travaillé ; équilibre stable.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N° 4</strong></td>
+                        <td>18 × 13 cm</td>
+                        <td>Éclat cortical épais (5 cm)</td>
+                        <td>Création totale, contour découpé par de larges enlèvements.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N° 5</strong></td>
+                        <td>17 × 13 cm</td>
+                        <td>Façonnage type biface</td>
+                        <td>Enlèvements sur le pourtour, tient en équilibre.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N° 6</strong></td>
+                        <td>14 × 7 cm</td>
+                        <td>Silex à patine jaune</td>
+                        <td>Mâchoire et pointe taillées, silhouette d'élan.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N° 7</strong></td>
+                        <td>10 × 10 cm</td>
+                        <td>Bloc massif taillé</td>
+                        <td>Taille sur 2 plans perpendiculaires, front naturel.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N° 8</strong></td>
+                        <td>12 × 11,5 cm</td>
+                        <td>Galet aménagé (Chopper)</td>
+                        <td>Silex noir et feu, arête supérieure rectifiée.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Fiches Détaillées -->
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">Fiches Détaillées</h2>
+        <div class="artefacts-grid">
+
+            <!-- Artefact N° 1 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 1</h3>
+                    <span class="badge">Fossile Directeur</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/1.png', 'Artefact N° 1 — 16 × 10 cm')">
+                    <img src="images/1.png" alt="Photographie de l'artefact N° 1" onerror="this.src='images/1.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 16 × 10 cm</span>
+                        <span><strong>Taille :</strong> Deux faces</span>
+                    </div>
+                    <p>L'œil est particulièrement mis en valeur par plusieurs enlèvements courts et profonds. L'oreille est suggérée et le mufle a fait l'objet d'une taille délicate.</p>
+                </div>
+            </div>
+
+            <!-- Artefact N° 2 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 2</h3>
+                    <span class="badge">Éléments complets</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/2.png', 'Artefact N° 2 — 14 × 11 cm')">
+                    <img src="images/2.png" alt="Photographie de l'artefact N° 2" onerror="this.src='images/2.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 14 × 11 cm</span>
+                        <span><strong>Taille :</strong> Entière</span>
+                    </div>
+                    <p>Contient les 4 éléments structurants principaux. L'arrière est nettement tranché par de larges enlèvements, en opposition avec le museau bien arrondi par de petites touches. L'oreille est nettement évoquée.</p>
+                    <p>L'œil surdimensionné est le déclencheur qui a provoqué le choix du galet.</p>
+                </div>
+            </div>
+
+            <!-- Artefact N° 3 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 3</h3>
+                    <span class="badge">Fossile Directeur</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/3.png', 'Artefact N° 3 — 15 × 9 cm')">
+                    <img src="images/3.png" alt="Photographie de l'artefact N° 3" onerror="this.src='images/3.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 15 × 9 cm</span>
+                        <span><strong>Taille :</strong> Type biface</span>
+                    </div>
+                    <p>L'œil est suggéré par un grand évidement, le mufle est bien travaillé et l'oreille est mise en évidence. La pièce tient en équilibre et sa silhouette rappelle celle de la pièce N° 6 (évoquant un élan).</p>
+                </div>
+            </div>
+
+            <!-- Artefact N° 4 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 4</h3>
+                    <span class="badge">Création Totale</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/4.png', 'Artefact N° 4 — 18 × 13 cm')">
+                    <img src="images/4.png" alt="Photographie de l'artefact N° 4" onerror="this.src='images/4.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 18 × 13 cm</span>
+                        <span><strong>Épaisseur :</strong> 5 cm</span>
+                    </div>
+                    <p>Œuvre étonnante taillée dans un éclat cortical épais. La partie supérieure conserve son cortex naturel, mais le reste du contour est découpé par de larges enlèvements.</p>
+                    <p>Tous les éléments sont présents : oreille soulignée, œil naturel agrandi par un éclat et dessous de mâchoire retouché.</p>
+                </div>
+            </div>
+
+            <!-- Artefact N° 5 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 5</h3>
+                    <span class="badge">Équilibre stable</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/5.png', 'Artefact N° 5 — 17 × 13 cm')">
+                    <img src="images/5.png" alt="Photographie de l'artefact N° 5" onerror="this.src='images/5.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 17 × 13 cm</span>
+                        <span><strong>Taille :</strong> Bifaciale</span>
+                    </div>
+                    <p>Découpé à la manière d'un biface par une série d'enlèvements réguliers sur tout le pourtour. La pièce présente une grande stabilité et tient naturellement en équilibre.</p>
+                </div>
+            </div>
+
+            <!-- Artefact N° 6 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 6</h3>
+                    <span class="badge">Patine Jaune</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/6.png', 'Artefact N° 6 — 14 × 7 cm')">
+                    <img src="images/6.png" alt="Photographie de l'artefact N° 6" onerror="this.src='images/6.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 14 × 7 cm</span>
+                        <span><strong>État :</strong> Impeccable</span>
+                    </div>
+                    <p>Réunit les trois éléments principaux proprement taillés. La pointe supérieure est délimitée avec précision et le museau est arrondi. La forme de la mâchoire évoque un élan. Tient en équilibre.</p>
+                </div>
+            </div>
+
+            <!-- Artefact N° 7 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 7</h3>
+                    <span class="badge">Bloc Massif</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/7.png', 'Artefact N° 7 — 10 × 10 cm')">
+                    <img src="images/7.png" alt="Photographie de l'artefact N° 7" onerror="this.src='images/7.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 10 × 10 cm</span>
+                        <span><strong>Taille :</strong> Perpendiculaire</span>
+                    </div>
+                    <p>Pièce massive taillée énergiquement sur deux plans de frappe perpendiculaires à l'arrière. La pointe supérieure est façonnée par 5 enlèvements sur 3 plans.</p>
+                    <p>Le devant naturel forme un « front de bison ». Tient en équilibre grâce à un arasement sous la base et une bosse naturelle (barbichette).</p>
+                </div>
+            </div>
+
+            <!-- Artefact N° 8 -->
+            <div class="artefact-card">
+                <div class="artefact-header">
+                    <h3>Artefact N° 8</h3>
+                    <span class="badge">Chopper</span>
+                </div>
+                <div class="artefact-image-container" onclick="openModal('images/8.png', 'Artefact N° 8 — 12 × 11,5 cm')">
+                    <img src="images/8.png" alt="Photographie de l'artefact N° 8" onerror="this.src='images/8.jpg';">
+                </div>
+                <div class="artefact-body">
+                    <div class="artefact-meta">
+                        <span><strong>Dimensions :</strong> 12 × 11,5 cm</span>
+                        <span><strong>Matériau :</strong> Silex noir/feu</span>
+                    </div>
+                    <p>Galet aménagé de structure très fine. L'arête supérieure a été rectifiée par retouches, notamment au niveau du départ du mufle et à son extrémité.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal pour affichage plein écran -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="imgFull">
+        <div class="modal-caption" id="modalCaption"></div>
+    </div>
+
+    <footer>
+        <p>Étude sur l'industrie lithique de Wimereux — Par Charles Belart</p>
+    </footer>
+
+    <!-- Script JavaScript léger pour la vue plein écran -->
+    <script>
+        function openModal(imgSrc, captionText) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("imgFull");
+            const caption = document.getElementById("modalCaption");
+            
+            modal.style.display = "flex";
+            modalImg.src = imgSrc;
+            caption.innerText = captionText;
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        // Fermeture avec la touche Échap
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    </script>
+
+</body>
+</html>
